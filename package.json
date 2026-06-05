@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/juanpappal/TP2-TrabajoFinal#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^5.2.1",
     "sequelize": "^6.37.8"
   }
 }
