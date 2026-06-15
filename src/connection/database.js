@@ -1,9 +1,10 @@
-const { Sequelize } = require("sequelize");
+import { Sequelize } from "sequelize";
+import { DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT } from "../config/env.js";
 
-const sequelize = new Sequelize("biblioteca_db", "root", "contoso", {
-  host: "localhost",
+const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
+  host: DB_HOST,
   dialect: "mysql",
-  port: 3306,
+  port: DB_PORT,
 });
 
 async function testConnection() {
@@ -17,4 +18,4 @@ async function testConnection() {
 
 testConnection();
 
-module.exports = sequelize;
+export default sequelize;

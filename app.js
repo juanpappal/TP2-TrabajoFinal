@@ -1,8 +1,13 @@
-const express = require("express");
-const sequelize = require("./src/config/database");
-require("./src/models");
+import express from "express";
+import { pathToFileURL } from "url";
+import sequelize from "./src/connection/database.js";
+import { PORT } from "./src/config/env.js";
+import router from "./src/routes/router.js";
+import errorHandler from "./src/middlewares/errorHandler.js";
+import notFound from "./src/middlewares/notFound.js";
+import "./src/models/index.js";
 
-const app = express();
+export const app = express();
 
 app.use(express.json());
 
@@ -10,11 +15,42 @@ app.get("/", (req, res) => {
   res.json({ message: "API funcionando" });
 });
 
-const PORT = process.env.PORT || 3000;
+app.use(router);
+app.use(notFound);
+app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+export async function initDatabase() {
+  try {
+    await sequelize.authenticate();
+    console.log("Conexión a MySQL establecida.");
+
+    await sequelize.sync({ alter: true });
+    console.log("Tablas sincronizadas con MySQL.");
+  } catch (error) {
+    console.error("Error al inicializar la base de datos:", error);
+    throw error;
+  }
+}
+
+function startServer() {
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  });
+}
+
+async function start() {
+  try {
+    await initDatabase();
+    startServer();
+  } catch (error) {
+    console.error("Error al iniciar la aplicación:", error);
+    process.exit(1);
+  }
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  start();
+}
 
 process.on("SIGINT", async () => {
   await sequelize.close();

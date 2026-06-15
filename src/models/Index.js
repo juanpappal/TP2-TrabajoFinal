@@ -1,5 +1,5 @@
-const Usuario = require("./Usuario");
-const Libro = require("./Libro");
+import Usuario from "./Usuario.js";
+import Libro from "./Libro.js";
 
 Usuario.hasMany(Libro, {
   foreignKey: "usuario_id",
@@ -11,7 +11,4 @@ Libro.belongsTo(Usuario, {
   as: "usuario"
 });
 
-module.exports = {
-  Usuario,
-  Libro,
-};
+export { Usuario, Libro };
