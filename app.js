@@ -48,9 +48,8 @@ async function start() {
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  start();
-}
+
+start();
 
 process.on("SIGINT", async () => {
   await sequelize.close();
