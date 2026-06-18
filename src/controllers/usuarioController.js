@@ -1,9 +1,15 @@
-import { Usuario } from "../models/index.js";
+import {
+  getUsuarios,
+  getUsuarioById,
+  createUsuario,
+  updateUsuario,
+  deleteUsuario,
+} from "../services/usuarioService.js";
 
 class UsuarioController {
   async getUsuarios(req, res, next) {
     try {
-      const usuarios = await Usuario.findAll();
+      const usuarios = await getUsuarios();
       res.json(usuarios);
     } catch (error) {
       next(error);
@@ -12,7 +18,7 @@ class UsuarioController {
 
   async getUsuarioById(req, res, next) {
     try {
-      const usuario = await Usuario.findByPk(req.params.id);
+      const usuario = await getUsuarioById(req.params.id);
       if (!usuario) {
         const err = new Error("Usuario no encontrado");
         err.status = 404;
@@ -26,7 +32,7 @@ class UsuarioController {
 
   async createUsuario(req, res, next) {
     try {
-      const usuario = await Usuario.create(req.body);
+      const usuario = await createUsuario(req.body);
       res.status(201).json(usuario);
     } catch (error) {
       error.status = 400;
@@ -36,14 +42,7 @@ class UsuarioController {
 
   async updateUsuario(req, res, next) {
     try {
-      const usuario = await Usuario.findByPk(req.params.id);
-      if (!usuario) {
-        const err = new Error("Usuario no encontrado");
-        err.status = 404;
-        throw err;
-      }
-
-      const usuarioActualizado = await usuario.update(req.body);
+      const usuarioActualizado = await updateUsuario(req.params.id, req.body);
       res.json(usuarioActualizado);
     } catch (error) {
       error.status = error.status || 400;
@@ -53,13 +52,7 @@ class UsuarioController {
 
   async deleteUsuario(req, res, next) {
     try {
-      const usuario = await Usuario.findByPk(req.params.id);
-      if (!usuario) {
-        const err = new Error("Usuario no encontrado");
-        err.status = 404;
-        throw err;
-      }
-      await usuario.destroy();
+      await deleteUsuario(req.params.id);
       res.status(204).send();
     } catch (error) {
       next(error);
