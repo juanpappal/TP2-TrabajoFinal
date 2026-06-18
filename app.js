@@ -1,7 +1,7 @@
 import express from "express";
 import { pathToFileURL } from "url";
 import sequelize from "./src/connection/database.js";
-import { PORT } from "./src/config/env.js";
+import { PORT } from "./src/config/config.js";
 import router from "./src/routes/router.js";
 import errorHandler from "./src/middlewares/errorHandler.js";
 import notFound from "./src/middlewares/notFound.js";
@@ -55,3 +55,5 @@ process.on("SIGINT", async () => {
   await sequelize.close();
   process.exit(0);
 });
+
+export default app;
