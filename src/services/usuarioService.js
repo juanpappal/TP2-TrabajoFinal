@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { Usuario } from "../models/index.js";
 
 export async function getUsuarios() {
@@ -9,7 +10,8 @@ export async function getUsuarioById(id) {
 }
 
 export async function createUsuario(data) {
-  return Usuario.create(data);
+  const passwordHasheada = await bcrypt.hash(data.password, 10);
+  return Usuario.create({ ...data, password: passwordHasheada });
 }
 
 export async function updateUsuario(id, data) {
