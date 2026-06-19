@@ -1,15 +1,19 @@
 import express from "express";
 import { pathToFileURL } from "url";
+import swaggerUi from "swagger-ui-express";
 import sequelize from "./src/connection/database.js";
 import { PORT } from "./src/config/config.js";
 import router from "./src/routes/router.js";
 import errorHandler from "./src/middlewares/errorHandler.js";
 import notFound from "./src/middlewares/notFound.js";
 import "./src/models/index.js";
+import swaggerSpec from "./src/config/swagger.js";
 
 export const app = express();
 
 app.use(express.json());
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/", (req, res) => {
   res.json({ message: "API funcionando" });
