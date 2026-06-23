@@ -1,5 +1,7 @@
 import express from "express";
 import usuarioController from "../controllers/usuarioController.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { adminChecker } from "../middlewares/adminChecker.js";
 
 const router = express.Router();
 
@@ -16,6 +18,8 @@ const router = express.Router();
  *   get:
  *     summary: Obtener todos los usuarios
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de usuarios
@@ -26,7 +30,7 @@ const router = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/Usuario'
  */
-router.get("/", usuarioController.getUsuarios);
+router.get("/", authMiddleware, adminChecker, usuarioController.getUsuarios);
 
 /**
  * @swagger
@@ -34,6 +38,8 @@ router.get("/", usuarioController.getUsuarios);
  *   get:
  *     summary: Obtener un usuario por ID
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -55,7 +61,7 @@ router.get("/", usuarioController.getUsuarios);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/:id", usuarioController.getUsuarioById);
+router.get("/:id", authMiddleware, adminChecker, usuarioController.getUsuarioById);
 
 /**
  * @swagger
@@ -91,6 +97,8 @@ router.post("/", usuarioController.createUsuario);
  *   put:
  *     summary: Actualizar un usuario existente
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -124,7 +132,7 @@ router.post("/", usuarioController.createUsuario);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.put("/:id", usuarioController.updateUsuario);
+router.put("/:id", authMiddleware, adminChecker, usuarioController.updateUsuario);
 
 /**
  * @swagger
@@ -132,6 +140,8 @@ router.put("/:id", usuarioController.updateUsuario);
  *   delete:
  *     summary: Eliminar un usuario
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -149,6 +159,6 @@ router.put("/:id", usuarioController.updateUsuario);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.delete("/:id", usuarioController.deleteUsuario);
+router.delete("/:id", authMiddleware, adminChecker, usuarioController.deleteUsuario);
 
 export default router;

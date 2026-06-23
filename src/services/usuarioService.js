@@ -1,17 +1,31 @@
 import bcrypt from "bcrypt";
 import { Usuario } from "../models/index.js";
 
+function sinPassword(usuario) {
+  if (!usuario) return usuario;
+  const data = usuario.toJSON();
+  delete data.password;
+  return data;
+}
+
 export async function getUsuarios() {
-  return Usuario.findAll();
+  const usuarios = await Usuario.findAll();
+  return usuarios.map(sinPassword);
 }
 
 export async function getUsuarioById(id) {
-  return Usuario.findByPk(id);
+  const usuario = await Usuario.findByPk(id);
+  return sinPassword(usuario);
 }
 
 export async function createUsuario(data) {
   const passwordHasheada = await bcrypt.hash(data.password, 10);
-  return Usuario.create({ ...data, password: passwordHasheada });
+  const usuario = await Usuario.create({
+    ...data,
+    password: passwordHasheada,
+    rol: "usuario",
+  });
+  return sinPassword(usuario);
 }
 
 export async function updateUsuario(id, data) {
@@ -21,7 +35,16 @@ export async function updateUsuario(id, data) {
     err.status = 404;
     throw err;
   }
-  return usuario.update(data);
+
+  const datosActualizados = { ...data };
+  delete datosActualizados.rol;
+
+  if (datosActualizados.password) {
+    datosActualizados.password = await bcrypt.hash(datosActualizados.password, 10);
+  }
+
+  const usuarioActualizado = await usuario.update(datosActualizados);
+  return sinPassword(usuarioActualizado);
 }
 
 export async function deleteUsuario(id) {

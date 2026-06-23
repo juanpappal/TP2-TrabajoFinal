@@ -1,5 +1,7 @@
 import express from "express";
 import libroController from "../controllers/libroController.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { adminChecker } from "../middlewares/adminChecker.js";
 
 const router = express.Router();
 
@@ -63,6 +65,8 @@ router.get("/:id", libroController.getLibroById);
  *   post:
  *     summary: Crear un nuevo libro
  *     tags: [Libros]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -83,7 +87,7 @@ router.get("/:id", libroController.getLibroById);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/", libroController.createLibro);
+router.post("/", authMiddleware, adminChecker, libroController.createLibro);
 
 /**
  * @swagger
@@ -91,6 +95,8 @@ router.post("/", libroController.createLibro);
  *   put:
  *     summary: Actualizar un libro existente
  *     tags: [Libros]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -124,7 +130,7 @@ router.post("/", libroController.createLibro);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.put("/:id", libroController.updateLibro);
+router.put("/:id", authMiddleware, adminChecker, libroController.updateLibro);
 
 /**
  * @swagger
@@ -132,6 +138,8 @@ router.put("/:id", libroController.updateLibro);
  *   delete:
  *     summary: Eliminar un libro
  *     tags: [Libros]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -149,6 +157,6 @@ router.put("/:id", libroController.updateLibro);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.delete("/:id", libroController.deleteLibro);
+router.delete("/:id", authMiddleware, adminChecker, libroController.deleteLibro);
 
 export default router;
